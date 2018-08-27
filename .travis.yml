@@ -70,6 +70,7 @@ install:
 
 before_script:
   - BUILD_WHEEL_METAS=()
+  - set -xv
   - |
     for meta in "${WHEEL_METAS[@]}"; do
         _f=${meta#wheels/} ; wheel=${_f%%/*}
@@ -80,6 +81,7 @@ before_script:
             echo "Builder for '$WHEEL_BUILDER_TYPE' skipping wheel '$wheel' of type '$wheel_type'"
         fi
     done
+  - set +xv
   - set | grep '^BUILD_WHEEL_METAS='
   # osx builders hang if `travis_terminate` is called from within the `before_script` step
   - |
