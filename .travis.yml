@@ -61,7 +61,7 @@ before_install:
 
 install:
   - |
-    if [ "$TRAVIS_OS_NAME" == osx ]; then
+    if [ "$TRAVIS_OS_NAME" == 'osx' ]; then
         pip install virtualenv
     fi
   - virtualenv $STARFORGE_VENV
@@ -81,23 +81,33 @@ before_script:
         fi
     done
   - set | grep '^BUILD_WHEEL_METAS='
-  - "[ ${#BUILD_WHEEL_METAS[@]} -gt 0 ] || { echo \"No wheel changes for builder '$WHEEL_BUILDER_TYPE', terminating\"; travis_terminate 0; }"
+  # osx builders hang if `travis_terminate` is called from within the `before_script` step
   - |
-    if [ "$WHEEL_BUILDER_TYPE" == 'c-extension' ]; then
-        case $TRAVIS_OS_NAME in
-            osx)
-                STARFORGE_IMAGE_ARGS="--image=ci/osx-${PY}"
-                ;;
-            linux)
-                STARFORGE_IMAGE_ARGS="--image=ci/linux-${PY}:x86_64 --image=ci/linux-${PY}:i686"
-                ;;
-        esac
-        ./.ci/wheel-cext-builder-setup.sh
-    else
-        STARFORGE_IMAGE_ARGS="--image=ci/linux-${PY}:${WHEEL_BUILDER_TYPE}"
+    if [ ${#BUILD_WHEEL_METAS[@]} -eq 0 ]; then
+        echo "No wheel changes for builder '$WHEEL_BUILDER_TYPE', terminating"
+        export STARFORGE_TRAVIS_TERMINATE=true
+        [ "$TRAVIS_OS_NAME" == 'osx' ] || travis_terminate 0
+    fi
+  - |
+    if [ "$STARFORGE_TRAVIS_TERMINATE" != true ]; then
+        if [ "$WHEEL_BUILDER_TYPE" == 'c-extension' ]; then
+            case $TRAVIS_OS_NAME in
+                osx)
+                    STARFORGE_IMAGE_ARGS="--image=ci/osx-${PY}"
+                    ;;
+                linux)
+                    STARFORGE_IMAGE_ARGS="--image=ci/linux-${PY}:x86_64 --image=ci/linux-${PY}:i686"
+                    ;;
+            esac
+            ./.ci/wheel-cext-builder-setup.sh
+        else
+            STARFORGE_IMAGE_ARGS="--image=ci/linux-${PY}:${WHEEL_BUILDER_TYPE}"
+        fi
     fi
 
 script:
+  # hopefully, `travis_terminate` works in the `script` step
+  - '[ "$STARFORGE_TRAVIS_TERMINATE" == true ] && { echo "Terminating due to \$STARFORGE_TRAVIS_TERMINATE=$STARFORGE_TRAVIS_TERMINATE"; travis_terminate 0; }'
   - |
     for meta in "${BUILD_WHEEL_METAS[@]}"; do
         _f=${meta#wheels/} ; wheel=${_f%%/*}
