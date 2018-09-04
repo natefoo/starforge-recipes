@@ -4,8 +4,9 @@ name: bx-python
 version: 0.8.2
 type: wheel
 purepy: false
-pip_install:
-  - Cython numpy==1.15.1 python-lzo
+setup_requires:
+  - Cython
+  - numpy
 yum:
   # manylinux1 images don't preinstall these, which is probably the way they
   # should all work
