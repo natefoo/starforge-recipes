@@ -1,16 +1,19 @@
 ---
 
 name: uWSGI
-version: 2.0.17.1
+version: 2.0.17.2
 type: wheel
-imageset: cext-py2-wheel
 purepy: false
+src:
+  - https://github.com/natefoo/uwsgi/archive/uwsgi-2.0.tar.gz
 prebuild:
-  all: cp "${SRC_ROOT_0}"/setup.cpyext.py "${SRC_ROOT_0}"/setup.py
   wheel: >
     [ $(uname -s) != 'Darwin' ] ||
     curl https://github.com/natefoo/uwsgi/commit/24c49361613fa3dbd0b61eb1a97733d48c00ff39.patch |
-    patch -d "${SRC_ROOT_0}" -p1
+    patch -d "${SRC_ROOT_0}" -p1 ;
+    curl https://github.com/natefoo/uwsgi/commit/79868a064663de5eefff16871da27de75a76d6e5.patch |
+    patch -d "${SRC_ROOT_0}" -p1 ;
+    cp "${SRC_ROOT_0}"/setup.cpyext.py "${SRC_ROOT_0}"/setup.py
 apt:
   - libpcre2-dev
 yum:
