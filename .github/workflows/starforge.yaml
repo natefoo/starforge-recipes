@@ -27,4 +27,4 @@ jobs:
       uses: trilom/file-changes-action@v1.2.3
     - name: test
       run: |
-          jq '.[]' '${{ steps.file_changes.outputs.files_modified}}' '${{ steps.file_changes.outputs.files_added}}'
+        jq -r '.[] | select(endswith("/meta.yml"))' $HOME/files_modified.json $HOME/files_added.json
