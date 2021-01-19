@@ -27,5 +27,4 @@ jobs:
       uses: trilom/file-changes-action@v1.2.3
     - name: test
       run: |
-          echo '${{ steps.file_changes.outputs.files_modified}}'
-          echo '${{ steps.file_changes.outputs.files_added}}'
+          jq '.[]' '${{ steps.file_changes.outputs.files_modified}}' '${{ steps.file_changes.outputs.files_added}}'
