@@ -1,0 +1,31 @@
+name: starforge
+on: [push, pull_request]
+env: 
+  STARFORGE: "git+https://github.com/galaxyproject/starforge#egg=starforge"
+  STARFORGE_CMD: "starforge --config-file=starforge.yml"
+  S3PYPI: "s3pypi"
+  S3PYPI_ROOT_INDEX: "git+https://github.com/natefoo/s3pypi-root-index#egg=s3pypi-root-index"
+  STARFORGE_VENV: "$HOME/venv"
+  WHEEL_BUILDER_TYPE: "c-extension"
+  DELOCATE: "git+https://github.com/natefoo/delocate@top-level-fix-squash#egg=delocate"
+jobs:
+  changes:
+    name: print changes
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # os: [macos-latest, ubuntu-latest]
+        # python: [3.6, 3.7, 3.8, 3.9]
+        os: [ubuntu-latest]
+        python: [3.6]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - uses: actions/checkout@v2
+    - id: file_changes
+      uses: trilom/file-changes-action@v1.2.3
+    - name: test
+      run: |
+          echo '${{ steps.file_changes.outputs.files_modified}}'
+          echo '${{ steps.file_changes.outputs.files_added}}'
