@@ -25,6 +25,9 @@ jobs:
     - uses: actions/checkout@v2
     - id: file_changes
       uses: trilom/file-changes-action@v1.2.3
-    - name: test
+    - name: changed wheel paths
+      id: wheel-paths
       run: |
         jq -r '.[] | select(endswith("/meta.yml"))' $HOME/files_modified.json $HOME/files_added.json
+    - name: setup virtualenv
+      run: virtualenv "$STARFORGE_VENV" && pip install "$STARFORGE"
