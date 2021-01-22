@@ -76,6 +76,9 @@ function run_build() {
 if [ ! -f "${GITHUB_WORKSPACE}/wheel_metas.txt" ]; then
     echo "No wheel_metas.txt, exiting"
     exit 1
+else
+    echo "wheel_metas.txt contents:"
+    cat "${GITHUB_WORKSPACE}/wheel_metas.txt"
 fi
 
 
