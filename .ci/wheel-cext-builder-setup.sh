@@ -2,8 +2,11 @@
 set -e
 set -x
 
-case $TRAVIS_OS_NAME in
-    osx)
+: ${OS_NAME:=$(uname -s)}
+: ${PY:="3.6"}
+
+case $OS_NAME in
+    Darwin)
         # See https://www.python.org/downloads/mac-osx/ and https://www.python.org/ftp/python/
         case $PY in
             3.6)
@@ -22,6 +25,10 @@ case $TRAVIS_OS_NAME in
                 pypt=0
                 macos_version=10.9
                 ;;
+            *)
+                "Unsupported Python version: $PY"
+                exit 1
+                ;;
         esac
         sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer /Developer
         curl -LO https://www.python.org/ftp/python/${PY}.${pypt}/python-${PY}.${pypt}-macosx${macos_version}.pkg
@@ -35,7 +42,7 @@ case $TRAVIS_OS_NAME in
         pip install "$DELOCATE" "${STARFORGE}[lzma]"
         pip install pyopenssl ndg-httpsclient pyasn1
         ;;
-    linux)
+    Linux)
         for arch in x86_64 i686; do
             image=quay.io/pypa/manylinux1_$arch
             docker pull $image

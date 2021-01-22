@@ -28,6 +28,10 @@ jobs:
     - name: changed wheel paths
       id: wheel-paths
       run: |
-        jq -r '.[] | select(endswith("/meta.yml"))' $HOME/files_modified.json $HOME/files_added.json
-    - name: setup virtualenv
-      run: virtualenv "$STARFORGE_VENV" && pip install "$STARFORGE"
+        jq -r '.[] | select(endswith("/meta.yml"))' $HOME/files_modified.json $HOME/files_added.json > $GITHUB_WORKSPACE/wheel_metas.txt
+    - name: run setup
+      run: ./build.sh setup
+    - name: run build
+      run: ./build.sh build
+      env:
+        PY: ${{ matrix.python }}
