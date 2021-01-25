@@ -15,6 +15,8 @@ fi
 : ${OS_NAME:=$(uname -s)}
 : ${S3PYPI:="s3pypi"}
 : ${S3PYPI_ROOT_INDEX:="git+https://github.com/natefoo/s3pypi-root-index#egg=s3pypi-root-index"}
+: ${S3_REGION:="us-east-2"}
+: ${S3_BUCKET:="nate-test-7o6f2nw8fmfd6gm0"}
 
 
 function setup_build() {
@@ -82,17 +84,14 @@ function deploy_build() {
     fi
     . "${STARFORGE_VENV}/bin/activate"
     pip install "$S3PYPI" "$S3PYPI_ROOT_INDEX"
-    #s3pypi --bucket galaxy-wheels --dist-path "${GITHUB_WORKSPACE}/wheelhouse" --region us-east-2 --force
-    #s3pypi-root-index --bucket galaxy-wheels --region us-east-2
+    s3pypi --bucket "$S3_BUCKET" --dist-path "${GITHUB_WORKSPACE}/wheelhouse" --region "$S3_REGION" --force
+    s3pypi-root-index --bucket "$S3_BUCKET" --region "$S3_REGION"
 }
 
 
 if [ ! -f "${GITHUB_WORKSPACE}/wheel_metas.txt" ]; then
     echo "No wheel_metas.txt, exiting"
     exit 1
-else
-    echo "wheel_metas.txt contents:"
-    cat "${GITHUB_WORKSPACE}/wheel_metas.txt"
 fi
 
 
