@@ -12,7 +12,6 @@ jobs:
     name: print changes
     runs-on: ${{ matrix.os }}
     strategy:
-      wheel_builder_type: c-extension
       matrix:
         # os: [macos-latest, ubuntu-latest]
         # python: [3.6, 3.7, 3.8, 3.9]
@@ -26,6 +25,7 @@ jobs:
             python: 3.6
             wheel_builder_type: universal
     defaults:
+      wheel_builder_type: c-extension
       run:
         shell: bash -l {0}
     steps:
