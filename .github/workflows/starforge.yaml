@@ -23,7 +23,6 @@ jobs:
             wheel_builder_type: purepy
           - os: ubuntu-latest
             python: 3.6
-            env:
             wheel_builder_type: universal
     defaults:
       run:
