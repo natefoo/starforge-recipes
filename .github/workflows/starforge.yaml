@@ -17,15 +17,15 @@ jobs:
         # python: [3.6, 3.7, 3.8, 3.9]
         os: [ubuntu-latest]
         python: [3.6]
+        wheel_builder_type: c-extension
         include:
           - os: ubuntu-latest
             python: 3.6
-            env:
-              WHEEL_BUILDER_TYPE: "purepy"
+            wheel_builder_type: purepy
           - os: ubuntu-latest
             python: 3.6
             env:
-              WHEEL_BUILDER_TYPE: "universal"
+            wheel_builder_type: universal
     defaults:
       run:
         shell: bash -l {0}
@@ -43,3 +43,4 @@ jobs:
       run: ./build.sh build
       env:
         PY: ${{ matrix.python }}
+        WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
