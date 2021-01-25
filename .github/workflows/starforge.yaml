@@ -43,3 +43,5 @@ jobs:
       env:
         PY: ${{ matrix.python }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
+    - name: deploy built artifacts
+      run: ./build.sh deploy

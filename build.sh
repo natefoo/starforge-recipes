@@ -13,6 +13,8 @@ fi
 : ${DELOCATE:="git+https://github.com/natefoo/delocate@top-level-fix-squash#egg=delocate"}
 : ${PY:="3.6"}
 : ${OS_NAME:=$(uname -s)}
+: ${S3PYPI:="s3pypi"}
+: ${S3PYPI_ROOT_INDEX:="git+https://github.com/natefoo/s3pypi-root-index#egg=s3pypi-root-index"}
 
 
 function setup_build() {
@@ -73,6 +75,18 @@ function run_build() {
 }
 
 
+function deploy_build() {
+    if [ ! -d "${GITHUB_WORKSPACE}/wheelhouse" ]; then
+        echo "No wheelhouse dir, so no wheels to deploy"
+        exit 0
+    fi
+    . "${STARFORGE_VENV}/bin/activate"
+    pip install "$S3PYPI" "$S3PYPI_ROOT_INDEX"
+    #s3pypi --bucket galaxy-wheels --dist-path "${GITHUB_WORKSPACE}/wheelhouse" --region us-east-2 --force
+    #s3pypi-root-index --bucket galaxy-wheels --region us-east-2
+}
+
+
 if [ ! -f "${GITHUB_WORKSPACE}/wheel_metas.txt" ]; then
     echo "No wheel_metas.txt, exiting"
     exit 1
@@ -89,12 +103,15 @@ case "${1:-}" in
     build)
         run_build
         ;;
+    deploy)
+        deploy_build
+        ;;
     '')
         setup_build
         run_build
         ;;
     *)
-        echo "usage: build.sh [setup|build]" >&2
+        echo "usage: build.sh [setup|build|deploy]" >&2
         exit 1
         ;;
 esac
