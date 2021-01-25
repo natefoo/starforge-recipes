@@ -14,9 +14,9 @@ jobs:
     strategy:
       matrix:
         #os: [macos-latest, ubuntu-latest]
-        #python: [3.6, 3.7, 3.8, 3.9]
+        #python-version: [3.6, 3.7, 3.8, 3.9]
         os: [macos-latest]
-        python: [3.6]
+        python-version: [3.6]
         wheel_builder_type: [c-extension]
         #include:
         #  - os: ubuntu-latest
@@ -36,6 +36,9 @@ jobs:
       id: wheel-paths
       run: |
         jq -r '.[] | select(endswith("/meta.yml"))' $HOME/files_modified.json $HOME/files_added.json > $GITHUB_WORKSPACE/wheel_metas.txt
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: run setup
       run: ./build.sh setup
     - name: run build
