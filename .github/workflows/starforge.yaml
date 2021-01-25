@@ -14,9 +14,9 @@ jobs:
     strategy:
       matrix:
         #os: [macos-latest, ubuntu-latest]
-        #python-version: [3.6, 3.7, 3.8, 3.9]
         os: [macos-latest]
-        python-version: [3.6]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        #python-version: [3.6]
         wheel_builder_type: [c-extension]
         #include:
         #  - os: ubuntu-latest
