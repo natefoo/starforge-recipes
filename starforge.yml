@@ -140,7 +140,7 @@ images:
             - cp36-cp36m
         buildenv:
             MACOSX_DEPLOYMENT_TARGET: 10.14
-        plat_name: macosx_10_14_x86_64
+        plat_name: macosx_10_14_intel
         use_delocate: true
     ci/osx-3.7:
         type: local
@@ -152,7 +152,7 @@ images:
             - cp37-cp37m
         buildenv:
             MACOSX_DEPLOYMENT_TARGET: 10.14
-        plat_name: macosx_10_14_x86_64
+        plat_name: macosx_10_14_intel
         use_delocate: true
     ci/osx-3.8:
         type: local
@@ -164,7 +164,7 @@ images:
             - cp38-cp38
         buildenv:
             MACOSX_DEPLOYMENT_TARGET: 10.14
-        plat_name: macosx_10_14_x86_64
+        plat_name: macosx_10_14_intel
         use_delocate: true
     ci/osx-3.9:
         type: local
@@ -176,5 +176,5 @@ images:
             - cp39-cp39
         buildenv:
             MACOSX_DEPLOYMENT_TARGET: 10.14
-        plat_name: macosx_10_14_x86_64
+        plat_name: macosx_10_14_intel
         use_delocate: true
