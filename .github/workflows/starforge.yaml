@@ -13,8 +13,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # os: [macos-latest, ubuntu-latest]
-        # python: [3.6, 3.7, 3.8, 3.9]
+        os: [macos-latest, ubuntu-latest]
+        python: [3.6, 3.7, 3.8, 3.9]
         os: [ubuntu-latest]
         python: [3.6]
         wheel_builder_type: [c-extension]
@@ -44,7 +44,7 @@ jobs:
         PY: ${{ matrix.python }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
     - name: deploy built artifacts
-      #if: github.event.pull_request.merged == true
+      if: github.event.pull_request.merged == true
       run: ./build.sh deploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
