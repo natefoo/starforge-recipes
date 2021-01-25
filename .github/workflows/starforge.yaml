@@ -39,6 +39,10 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Report python version
+      run: python -V
+    - name: Report python3 version
+      run: python3 -V
     - name: run setup
       run: ./build.sh setup
     - name: run build
