@@ -25,9 +25,9 @@ jobs:
         #  - os: ubuntu-latest
         #    python: 3.6
         #    wheel_builder_type: universal
-    defaults:
-      run:
-        shell: bash -l {0}
+    #defaults:
+    #  run:
+    #    shell: bash -l {0}
     steps:
     - uses: actions/checkout@v2
     - id: file_changes
