@@ -13,18 +13,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
-        python: [3.6, 3.7, 3.8, 3.9]
-        #os: [ubuntu-latest]
-        #python: [3.6]
+        #os: [macos-latest, ubuntu-latest]
+        #python: [3.6, 3.7, 3.8, 3.9]
+        os: [macos-latest]
+        python: [3.6]
         wheel_builder_type: [c-extension]
-        include:
-          - os: ubuntu-latest
-            python: 3.6
-            wheel_builder_type: purepy
-          - os: ubuntu-latest
-            python: 3.6
-            wheel_builder_type: universal
+        #include:
+        #  - os: ubuntu-latest
+        #    python: 3.6
+        #    wheel_builder_type: purepy
+        #  - os: ubuntu-latest
+        #    python: 3.6
+        #    wheel_builder_type: universal
     defaults:
       run:
         shell: bash -l {0}

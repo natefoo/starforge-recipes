@@ -30,13 +30,13 @@ case $OS_NAME in
                 exit 1
                 ;;
         esac
-        sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer /Developer
-        curl -LO https://www.python.org/ftp/python/${PY}.${pypt}/python-${PY}.${pypt}-macosx${macos_version}.pkg
-        sudo installer -pkg python-${PY}.${pypt}-macosx${macos_version}.pkg -target /
+        #sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer /Developer
+        #curl -LO https://www.python.org/ftp/python/${PY}.${pypt}/python-${PY}.${pypt}-macosx${macos_version}.pkg
+        #sudo installer -pkg python-${PY}.${pypt}-macosx${macos_version}.pkg -target /
         # we need Starforge in the buildenv since the osx build uses the local execution context, but installing it a
         # second time should be low cost since pip will have cached it
-        rm -rf $STARFORGE_VENV
-        virtualenv -p /Library/Frameworks/Python.framework/Versions/${PY}/bin/python${PY%%.*} $STARFORGE_VENV
+        #rm -rf $STARFORGE_VENV
+        #virtualenv -p /Library/Frameworks/Python.framework/Versions/${PY}/bin/python${PY%%.*} $STARFORGE_VENV
         # $STARFORGE_VENV should still be activated
         #. $HOME/buildenv/bin/activate
         pip install "$DELOCATE" "${STARFORGE}[lzma]"
