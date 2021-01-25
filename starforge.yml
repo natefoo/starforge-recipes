@@ -140,7 +140,7 @@ images:
             - cp36-cp36m
         #buildenv:
         #    MACOSX_DEPLOYMENT_TARGET: 10.6
-        #plat_name: macosx_10_6_intel
+        plat_name: macosx_10_6_intel
         use_delocate: true
     ci/osx-3.7:
         type: local
