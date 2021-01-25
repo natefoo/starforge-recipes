@@ -11,7 +11,7 @@ fi
 : ${STARFORGE_VENV:="${GITHUB_WORKSPACE}/venv"}
 : ${WHEEL_BUILDER_TYPE:="c-extension"}
 : ${DELOCATE:="git+https://github.com/natefoo/delocate@top-level-fix-squash#egg=delocate"}
-: ${PY:="3.6"}
+#: ${PY:="3.6"}
 : ${OS_NAME:=$(uname -s)}
 : ${S3PYPI:="s3pypi"}
 : ${S3PYPI_ROOT_INDEX:="git+https://github.com/natefoo/s3pypi-root-index#egg=s3pypi-root-index"}
@@ -28,6 +28,8 @@ function setup_build() {
 
 function run_build() {
     . "${STARFORGE_VENV}/bin/activate"
+
+    PY=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
 
     BUILD_WHEEL_METAS=()
     for meta in $(cat "${GITHUB_WORKSPACE}/wheel_metas.txt"); do

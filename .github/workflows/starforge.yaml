@@ -49,7 +49,7 @@ jobs:
     - name: run build
       run: ./build.sh build
       env:
-        PY: ${{ matrix.python }}
+        #PY: ${{ matrix.python-version }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
     - name: deploy built artifacts
       #if: github.event.pull_request.merged == true
