@@ -64,6 +64,7 @@ jobs:
       with:
         name: wheelhouse
         path: "wheelhouse/"
+      continue-on-error: true
     - name: Check previous step
       id: download
       if: ${{ failure() }}
