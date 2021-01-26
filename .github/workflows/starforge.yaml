@@ -50,12 +50,15 @@ jobs:
       env:
         #PY: ${{ matrix.python-version }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
+    - run: echo $GITHUB_WORKSPACE
+    - run: pwd
+    - run: ls -l
     - uses: actions/upload-artifact@v2
       with:
         name: wheelhouse
         path: "${GITHUB_WORKSPACE}/wheelhouse/"
   deploy:
-    name: Build Wheels
+    name: Deploy Wheels
     needs: build
     runs-on: ubuntu-latest
     steps:
