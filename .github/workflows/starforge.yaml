@@ -52,11 +52,11 @@ jobs:
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
     - run: echo $GITHUB_WORKSPACE
     - run: pwd
-    - run: ls -l
+    - run: ls -l wheelhouse
     - uses: actions/upload-artifact@v2
       with:
         name: wheelhouse
-        path: "${GITHUB_WORKSPACE}/wheelhouse/"
+        path: "wheelhouse/"
   deploy:
     name: Deploy Wheels
     needs: build
