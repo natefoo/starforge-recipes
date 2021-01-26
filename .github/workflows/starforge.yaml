@@ -55,7 +55,6 @@ jobs:
         name: wheelhouse
         path: "wheelhouse/"
   deploy:
-
     name: Deploy Wheels
     needs: build
     #if: github.event.pull_request.merged == true
