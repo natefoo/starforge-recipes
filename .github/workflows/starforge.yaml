@@ -67,7 +67,7 @@ jobs:
       continue-on-error: true
     - name: List wheelhouse
       id: wheelhouse
-      run: ls -R "wheelhouse/" && echo ::set-output name=exists::true || echo ::set-output name=exists::false
+      run: ls -R "wheelhouse/" && echo "::set-output name=exists::true" || echo "::set-output name=exists::false"
     - uses: actions/setup-python@v2
       if: ${{ steps.wheelhouse.outputs.exists }}
       with:
