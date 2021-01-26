@@ -11,12 +11,7 @@ fi
 : ${STARFORGE_VENV:="${GITHUB_WORKSPACE}/venv"}
 : ${WHEEL_BUILDER_TYPE:="c-extension"}
 : ${DELOCATE:="git+https://github.com/natefoo/delocate@top-level-fix-squash#egg=delocate"}
-#: ${PY:="3.6"}
 : ${OS_NAME:=$(uname -s)}
-: ${S3PYPI:="s3pypi"}
-: ${S3PYPI_ROOT_INDEX:="git+https://github.com/natefoo/s3pypi-root-index#egg=s3pypi-root-index"}
-: ${S3_REGION:="us-east-2"}
-: ${S3_BUCKET:="nate-test-7o6f2nw8fmfd6gm0"}
 
 
 function setup_build() {
@@ -51,12 +46,32 @@ function run_build() {
         case "$OS_NAME" in
             Darwin)
                 STARFORGE_IMAGE_ARGS="--image=ci/osx-${PY}"
+                pip install "$DELOCATE" "${STARFORGE}[lzma]"
+                pip install pyopenssl ndg-httpsclient pyasn1
                 ;;
             Linux)
                 STARFORGE_IMAGE_ARGS="--image=ci/linux-${PY}:x86_64 --image=ci/linux-${PY}:i686"
+                for arch in x86_64 i686; do
+                    image=quay.io/pypa/manylinux1_$arch
+                    docker pull $image
+                    case $arch in
+                        i686)
+                            linux32=/usr/bin/linux32
+                            entrypoint="ENTRYPOINT [\"${linux32}\"]"
+                            ;;
+                        x86_64)
+                            linux32=
+                            entrypoint=
+                            ;;
+                    esac
+                    sed -e "s%ARCH%${arch}%g" -e "s%STARFORGE%${STARFORGE}%g" -e "s%LINUX32%${linux32}%g" \
+                        -e "s%ENTRYPOINT%${entrypoint}%g" .ci/Dockerfile > .ci/Dockerfile.$arch
+                    echo ".ci/Dockerfile.$arch contains:"
+                    cat .ci/Dockerfile.$arch
+                    docker build -t manylinux1:$arch -f .ci/Dockerfile.$arch .
+                done
                 ;;
         esac
-        ./.ci/wheel-cext-builder-setup.sh
     else
         STARFORGE_IMAGE_ARGS="--image=ci/linux-${PY}:${WHEEL_BUILDER_TYPE}"
     fi
@@ -79,18 +94,6 @@ function run_build() {
 }
 
 
-function deploy_build() {
-    if [ ! -d "${GITHUB_WORKSPACE}/wheelhouse" ]; then
-        echo "No wheelhouse dir, so no wheels to deploy"
-        exit 0
-    fi
-    . "${STARFORGE_VENV}/bin/activate"
-    pip install "$S3PYPI" "$S3PYPI_ROOT_INDEX"
-    s3pypi --bucket "$S3_BUCKET" --dist-path "${GITHUB_WORKSPACE}/wheelhouse" --region "$S3_REGION" --force
-    s3pypi-root-index --bucket "$S3_BUCKET" --region "$S3_REGION"
-}
-
-
 if [ ! -f "${GITHUB_WORKSPACE}/wheel_metas.txt" ]; then
     echo "No wheel_metas.txt, exiting"
     exit 1
@@ -104,15 +107,12 @@ case "${1:-}" in
     build)
         run_build
         ;;
-    deploy)
-        deploy_build
-        ;;
     '')
         setup_build
         run_build
         ;;
     *)
-        echo "usage: build.sh [setup|build|deploy]" >&2
+        echo "usage: build.sh [setup|build]" >&2
         exit 1
         ;;
 esac

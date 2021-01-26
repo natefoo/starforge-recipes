@@ -15,22 +15,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [macos-latest, ubuntu-latest]
-        os: [macos-latest]
+        os: [macos-latest, ubuntu-latest]
+        #os: [macos-latest]
         #os: [ubuntu-latest]
-        #python-version: [3.6, 3.7, 3.8, 3.9]
-        python-version: [3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        #python-version: [3.6, 3.7]
         wheel_builder_type: [c-extension]
-        #include:
-        #  - os: ubuntu-latest
-        #    python: 3.6
-        #    wheel_builder_type: purepy
-        #  - os: ubuntu-latest
-        #    python: 3.6
-        #    wheel_builder_type: universal
-    #defaults:
-    #  run:
-    #    shell: bash -l {0}
+        include:
+        - os: ubuntu-latest
+          python: 3.6
+          wheel_builder_type: purepy
+        - os: ubuntu-latest
+          python: 3.6
+          wheel_builder_type: universal
     steps:
     - uses: actions/checkout@v2
     - uses: trilom/file-changes-action@v1.2.3
@@ -50,11 +47,9 @@ jobs:
     - name: Build wheels
       run: ./build.sh build
       env:
-        #PY: ${{ matrix.python-version }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
-    - run: echo $GITHUB_WORKSPACE
-    - run: pwd
-    - run: ls -l wheelhouse
+    - name: List wheelhouse
+      run: [ -d "wheelhouse/" ] && ls -R "wheelhouse/" || echo "No wheelhouse dir"
     - uses: actions/upload-artifact@v2
       with:
         name: wheelhouse

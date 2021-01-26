@@ -132,8 +132,7 @@ images:
     ci/osx-3.6:
         type: local
         pkgtool: brew
-        #buildpy: ~/venv/bin/python
-        #buildpy: python  # hopefully $PATH
+        #buildpy: python  # from $PATH
         pythons:
             - python  # from $PATH = buildpy
         py_abi_tags:
@@ -145,7 +144,7 @@ images:
     ci/osx-3.7:
         type: local
         pkgtool: brew
-        #buildpy: ~/venv/bin/python
+        #buildpy: python  # from $PATH
         pythons:
             - python  # from $PATH = buildpy
         py_abi_tags:
@@ -157,7 +156,7 @@ images:
     ci/osx-3.8:
         type: local
         pkgtool: brew
-        buildpy: ~/venv/bin/python
+        #buildpy: python  # from $PATH
         pythons:
             - python  # from $PATH = buildpy
         py_abi_tags:
@@ -169,7 +168,7 @@ images:
     ci/osx-3.9:
         type: local
         pkgtool: brew
-        buildpy: ~/venv/bin/python
+        #buildpy: python  # from $PATH
         pythons:
             - python  # from $PATH = buildpy
         py_abi_tags:
