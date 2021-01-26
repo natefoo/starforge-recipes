@@ -8,14 +8,15 @@ env:
   WHEEL_BUILDER_TYPE: "c-extension"
   DELOCATE: "git+https://github.com/natefoo/delocate@top-level-fix-squash#egg=delocate"
 jobs:
-  changes:
-    name: print changes
+  build:
+    name: Build Wheels
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         #os: [macos-latest, ubuntu-latest]
-        os: [macos-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        #os: [macos-latest]
+        os: [ubuntu-latest]
+        #python-version: [3.6, 3.7, 3.8, 3.9]
         #python-version: [3.6]
         wheel_builder_type: [c-extension]
         #include:
@@ -30,10 +31,9 @@ jobs:
     #    shell: bash -l {0}
     steps:
     - uses: actions/checkout@v2
-    - id: file_changes
-      uses: trilom/file-changes-action@v1.2.3
-    - name: changed wheel paths
-      id: wheel-paths
+    - uses: trilom/file-changes-action@v1.2.3
+      name: Collect file changes
+    - name: Filter file changes to wheel paths
       run: |
         jq -r '.[] | select(endswith("/meta.yml"))' $HOME/files_modified.json $HOME/files_added.json > $GITHUB_WORKSPACE/wheel_metas.txt
     - uses: actions/setup-python@v2
@@ -43,14 +43,35 @@ jobs:
       run: python -V
     - name: Report python3 version
       run: python3 -V
-    - name: run setup
+    - name: Setup build environment
       run: ./build.sh setup
-    - name: run build
+    - name: Build wheels
       run: ./build.sh build
       env:
         #PY: ${{ matrix.python-version }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
-    - name: deploy built artifacts
+    - name: Upload build artifacts
+    - uses: actions/upload-artifact@v2
+      with:
+        name: wheelhouse
+        path: "${GITHUB_WORKSPACE}/wheelhouse/"
+  deploy:
+    name: Build Wheels
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: wheelhouse
+        path: "wheelhouse/"
+    - name: List wheelhouse
+      run: ls -R "wheelhouse/"
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Setup build environment
+      run: ./build.sh setup
+    - name: Deploy built artifacts
       #if: github.event.pull_request.merged == true
       run: ./build.sh deploy
       env:
