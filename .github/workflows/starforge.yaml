@@ -50,7 +50,6 @@ jobs:
       env:
         #PY: ${{ matrix.python-version }}
         WHEEL_BUILDER_TYPE: ${{ matrix.wheel_builder_type }}
-    - name: Upload build artifacts
     - uses: actions/upload-artifact@v2
       with:
         name: wheelhouse
