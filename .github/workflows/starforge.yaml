@@ -57,7 +57,7 @@ jobs:
   deploy:
     name: Deploy Wheels
     needs: build
-    if: github.event.pull_request.merged == true
+    #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/download-artifact@v2
