@@ -7,6 +7,8 @@ env:
   S3PYPI_ROOT_INDEX: "git+https://github.com/natefoo/s3pypi-root-index#egg=s3pypi-root-index"
   WHEEL_BUILDER_TYPE: "c-extension"
   DELOCATE: "git+https://github.com/natefoo/delocate@top-level-fix-squash#egg=delocate"
+  S3_REGION: "us-east-2"
+  S3_BUCKET: "nate-test-7o6f2nw8fmfd6gm0"
 jobs:
   build:
     name: Build Wheels
@@ -60,6 +62,7 @@ jobs:
   deploy:
     name: Deploy Wheels
     needs: build
+    #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/download-artifact@v2
@@ -71,11 +74,15 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: 3.9
-    - name: Setup build environment
-      run: ./build.sh setup
-    - name: Deploy built artifacts
-      #if: github.event.pull_request.merged == true
-      run: ./build.sh deploy
+    - name: Setup deploy environment
+      run: python3 -m venv ./venv && ./venv/bin/pip install "$S3PYPI" "$S3PYPI_ROOT_INDEX"
+    - name: Deploy wheels
+      run: ./venv/bin/s3pypi --bucket "$S3_BUCKET" --dist-path "./wheelhouse" --region "$S3_REGION" --force
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: Update root index page
+      run: ./venv/bin/s3pypi-root-index --bucket "$S3_BUCKET" --region "$S3_REGION"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
