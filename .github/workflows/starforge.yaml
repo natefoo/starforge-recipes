@@ -69,22 +69,22 @@ jobs:
       if: ${{ failure() }}
       run: echo ::set-output name=failed::true
     - name: List wheelhouse
-      if: ! ${{ steps.download.failed }}
+      if: ${{ ! steps.download.failed }}
       run: ls -R "wheelhouse/"
     - uses: actions/setup-python@v2
+      if: ${{ ! steps.download.failed }}
       with:
         python-version: 3.9
     - name: Setup deploy environment
-      if: ! ${{ steps.download.failed }}
+      if: ${{ ! steps.download.failed }}
       run: python3 -m venv ./venv && ./venv/bin/pip install "$S3PYPI" "$S3PYPI_ROOT_INDEX"
     - name: Deploy wheels
-      if: ! ${{ steps.download.failed }}
+      if: ${{ ! steps.download.failed }}
       run: ./venv/bin/s3pypi --bucket "$S3_BUCKET" --dist-path "./wheelhouse" --region "$S3_REGION" --force
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     - name: Update root index page
-      if: ! ${{ steps.download.failed }}
       run: ./venv/bin/s3pypi-root-index --bucket "$S3_BUCKET" --region "$S3_REGION"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
